@@ -26,8 +26,9 @@ class Skyblock extends PluginBase
             "mysql" => "mysql.sql"
         ]);
 
-        $this->database->executeGeneric("players.init");
-        $this->database->executeGeneric("skyblocks.init");
+        $this->getDatabase()->executeGeneric("players.init");
+        $this->getDatabase()->executeGeneric("skyblocks.init");
+        $this->getDatabase()->waitAll();
     }
 
     protected function onLoad(): void {
