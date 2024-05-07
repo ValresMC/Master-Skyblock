@@ -1,0 +1,5 @@
+name: Master-Skyblock
+author: Valres
+version: 0.0.1
+api: [5.0.0]
+main: Valres\Skyblock\Skyblock
