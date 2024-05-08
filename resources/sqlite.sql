@@ -1,4 +1,4 @@
--- #! sqlite
+-- #! mysql
 -- #{ players
 -- # { init
 CREATE TABLE IF NOT EXISTS players
@@ -7,6 +7,20 @@ CREATE TABLE IF NOT EXISTS players
     skyblock    TEXT,
     rank        TEXT
 );
+-- # }
+-- # { getAll
+SELECT * FROM players;
+-- # { create
+-- #    :name     string
+-- #    :skyblock string
+-- #    :rank     string
+INSERT INTO players (name, skyblock, rank) VALUES (:name, :skyblock, :rank);
+-- # }
+-- # { update
+-- #    :name     string
+-- #    :skyblock string
+-- #    :rank     string
+UPDATE players SET skyblock = :skyblock, rank = :rank WHERE name = :name
 -- # }
 -- #}
 -- #{ skyblocks

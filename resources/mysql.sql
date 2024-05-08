@@ -3,18 +3,17 @@
 -- # { init
 CREATE TABLE IF NOT EXISTS players
 (
-    name        TEXT,
-    skyblock    TEXT,
-    rank        TEXT
+    name        VARCHAR(255) PRIMARY KEY,
+    skyblock    VARCHAR(255) NULL,
+    rank        VARCHAR(255) NULL
 );
 -- # }
 -- # { getAll
 SELECT * FROM players;
+-- # }
 -- # { create
 -- #    :name     string
--- #    :skyblock string
--- #    :rank     string
-INSERT INTO players (name, skyblock, rank) VALUES (:name, :skyblock, :rank);
+INSERT IGNORE INTO players (name, skyblock, rank) VALUES (:name, NULL, NULL);
 -- # }
 -- # { update
 -- #    :name     string
@@ -27,14 +26,14 @@ UPDATE players SET skyblock = :skyblock, rank = :rank WHERE name = :name
 -- # { init
 CREATE TABLE IF NOT EXISTS skyblocks
 (
-    name        TEXT,
-    leader      TEXT,
-    memberSpawn TEXT,
-    visitSpawn  TEXT,
-    members     TEXT,
-    isLock      TEXT,
-    points      FLOAT,
-    creation    TEXT
+    name        VARCHAR(255) PRIMARY KEY,
+    leader      VARCHAR(255),
+    memberSpawn VARCHAR(255),
+    visitSpawn  VARCHAR(255),
+    members     VARCHAR(255),
+    isLock      VARCHAR(255),
+    points      INTEGER,
+    creation    VARCHAR(255)
 );
 -- # }
 -- #}
