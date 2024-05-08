@@ -29,56 +29,141 @@ declare(strict_types=1);
 
 namespace Valres\Skyblock\libs\CortexPE\Commando;
 
-use pocketmine\lang\Translatable;
+
+use Valres\Skyblock\libs\CortexPE\Commando\constraint\BaseConstraint;
+use Valres\Skyblock\libs\CortexPE\Commando\traits\ArgumentableTrait;
+use Valres\Skyblock\libs\CortexPE\Commando\traits\IArgumentable;
+use pocketmine\command\CommandSender;
 use pocketmine\plugin\Plugin;
-use function trim;
+use function explode;
 
-abstract class BaseSubCommand extends BaseCommand {
-
+abstract class BaseSubCommand implements IArgumentable, IRunnable {
+	use ArgumentableTrait;
+	/** @var string */
+	private string $name;
+	/** @var string[] */
+	private array $aliases;
+	/** @var string */
+	private string $description;
+	/** @var string */
+	protected string $usageMessage;
+	/** @var string|null */
+	private ?string $permission = null;
+	/** @var CommandSender */
+	protected CommandSender $currentSender;
+	/** @var BaseCommand */
 	protected BaseCommand $parent;
+	/** @var BaseConstraint[] */
+	private array $constraints = [];
+
+	public function __construct(string $name, string $description = "", array $aliases = []) {
+		$this->name = $name;
+		$this->description = $description;
+		$this->aliases = $aliases;
+
+		$this->prepare();
+
+		$this->usageMessage = $this->generateUsageMessage();
+	}
+
+	abstract public function onRun(CommandSender $sender, string $aliasUsed, array $args): void;
 
 	/**
-	 * @param string[] $aliases
+	 * @return string
 	 */
-	public function __construct(
-		Plugin $plugin,
-		string $name,
-		Translatable|string $description = "",
-		array $aliases = []
-	) {
-		parent::__construct($plugin, $name, $description, $aliases);
-
-		$this->usageMessage = "";
-	}
-
-	public function getParent(): BaseCommand {
-		return $this->parent;
+	public function getName(): string {
+		return $this->name;
 	}
 
 	/**
+	 * @return string[]
+	 */
+	public function getAliases(): array {
+		return $this->aliases;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getDescription(): string {
+		return $this->description;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getUsageMessage(): string {
+		return $this->usageMessage;
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getPermission(): ?string {
+		return $this->permission;
+	}
+
+	/**
+	 * @param string $permission
+	 */
+	public function setPermission(string $permission): void {
+		$this->permission = $permission;
+	}
+
+	public function testPermissionSilent(CommandSender $sender): bool {
+		if(empty($this->permission)) {
+			return true;
+		}
+		foreach(explode(";", $this->permission) as $permission) {
+			if($sender->hasPermission($permission)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * @param CommandSender $currentSender
+	 *
+	 * @internal Used to pass the current sender from the parent command
+	 */
+	public function setCurrentSender(CommandSender $currentSender): void {
+		$this->currentSender = $currentSender;
+	}
+
+	/**
+	 * @param BaseCommand $parent
+	 *
 	 * @internal Used to pass the parent context from the parent command
 	 */
 	public function setParent(BaseCommand $parent): void {
 		$this->parent = $parent;
 	}
 
-	public function getUsage(): Translatable|string {
-		if(empty($this->usageMessage)){
-			$parent = $this->parent;
-			$parentNames = "";
+	public function sendError(int $errorCode, array $args = []): void {
+		$this->parent->sendError($errorCode, $args);
+	}
 
-			while($parent instanceof BaseSubCommand) {
-				$parentNames = $parent->getName() . $parentNames;
-				$parent = $parent->getParent();
-			}
+	public function sendUsage():void {
+		$this->currentSender->sendMessage("/{$this->parent->getName()} $this->usageMessage");
+	}
 
-			if($parent instanceof BaseCommand){
-				$parentNames = $parent->getName() . " " . $parentNames;
-			}
+    public function addConstraint(BaseConstraint $constraint) : void {
+        $this->constraints[] = $constraint;
+    }
 
-			$this->usageMessage = $this->generateUsageMessage();
-		}
+    /**
+     * @return BaseConstraint[]
+     */
+    public function getConstraints(): array {
+        return $this->constraints;
+    }
 
-		return $this->usageMessage;
+	/**
+	 * @return Plugin
+	 */
+	public function getOwningPlugin(): Plugin {
+		return $this->parent->getOwningPlugin();
 	}
 }

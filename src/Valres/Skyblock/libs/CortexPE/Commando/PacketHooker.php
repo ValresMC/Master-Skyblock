@@ -30,7 +30,6 @@ declare(strict_types=1);
 namespace Valres\Skyblock\libs\CortexPE\Commando;
 
 
-use Valres\Skyblock\libs\muqsit\simplepackethandler\SimplePacketHandler;
 use Valres\Skyblock\libs\CortexPE\Commando\exception\HookAlreadyRegistered;
 use Valres\Skyblock\libs\CortexPE\Commando\store\SoftEnumStore;
 use Valres\Skyblock\libs\CortexPE\Commando\traits\IArgumentable;
@@ -45,6 +44,7 @@ use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use pocketmine\plugin\Plugin;
 use pocketmine\Server;
 use ReflectionClass;
+use Valres\Skyblock\libs\muqsit\simplepackethandler\SimplePacketHandler;
 
 class PacketHooker implements Listener {
 	/** @var bool */

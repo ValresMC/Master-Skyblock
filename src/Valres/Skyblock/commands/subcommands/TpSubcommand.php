@@ -11,18 +11,14 @@ use Valres\Skyblock\Skyblock;
 
 class TpSubcommand extends BaseSubCommand
 {
-    public function __construct() {
-        parent::__construct(Skyblock::getInstance(), "tp", "Teleport to your island", ["go"]);
+    protected function prepare(): void {
         $this->setPermission(DefaultPermissions::ROOT_USER);
     }
-
-    protected function prepare(): void {}
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
         if(!$sender instanceof Player) return;
         $plugin = Skyblock::getInstance();
         $playerManager = $plugin->getPlayerManager();
-        $skyblockManager = $plugin->getSkyblockManager();
 
         $skyblockPlayer = $playerManager->getSkyblockPlayer($sender);
         if(!$skyblockPlayer instanceof SkyblockPlayer) return;

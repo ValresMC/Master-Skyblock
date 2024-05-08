@@ -7,25 +7,25 @@ use pocketmine\permission\DefaultPermissions;
 use Valres\Skyblock\commands\subcommands\CreateSubcommand;
 use Valres\Skyblock\commands\subcommands\TpSubcommand;
 use Valres\Skyblock\libs\CortexPE\Commando\BaseCommand;
-use Valres\Skyblock\Skyblock;
 
 class IslandCommand extends BaseCommand
 {
-    public function __construct() {
-        parent::__construct(Skyblock::getInstance(), "island", "Island base command", ["skyblock", "is"]);
-        $this->setPermission(DefaultPermissions::ROOT_USER);
-    }
-
     protected function prepare(): void {
-        $this->registerSubCommand(new CreateSubcommand());
-        $this->registerSubCommand(new TpSubcommand());
+        $this->setPermission(DefaultPermissions::ROOT_USER);
+        $this->registerSubCommand(new CreateSubcommand("create", "Create your island"));
+        $this->registerSubCommand(new TpSubcommand("tp", "Teleport to your island", ["go"]));
     }
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
+        $commands = [];
         $message = "§9Skyblock commands§r :\n";
         foreach($this->getSubCommands() as $subCommand){
+            if(!in_array($subCommand->getName(), $commands))
             $message .= "§9 - /is " . $subCommand->getName() . "§r : " . $subCommand->getDescription() . "\n";
+            $commands[] = $subCommand->getName();
         }
         $sender->sendMessage($message);
     }
+
+    public function getPermission() {}
 }

@@ -5,26 +5,22 @@ namespace Valres\Skyblock\commands\subcommands;
 use pocketmine\command\CommandSender;
 use pocketmine\permission\DefaultPermissions;
 use pocketmine\player\Player;
+use pocketmine\utils\Utils;
 use pocketmine\world\World;
-use pocketmine\world\WorldCreationOptions;
-use Valres\Skyblock\generator\Island;
 use Valres\Skyblock\libs\CortexPE\Commando\args\RawStringArgument;
 use Valres\Skyblock\libs\CortexPE\Commando\BaseSubCommand;
 use Valres\Skyblock\libs\CortexPE\Commando\exception\ArgumentOrderException;
 use Valres\Skyblock\player\SkyblockPlayer;
 use Valres\Skyblock\Skyblock;
+use Valres\Skyblock\utils\WorldHelper;
 
 class CreateSubcommand extends BaseSubCommand
 {
-    public function __construct() {
-        parent::__construct(Skyblock::getInstance(), "create", "Create a island");
-        $this->setPermission(DefaultPermissions::ROOT_USER);
-    }
-
     /**
      * @throws ArgumentOrderException
      */
     protected function prepare(): void {
+        $this->setPermission(DefaultPermissions::ROOT_USER);
         $this->registerArgument(0, new RawStringArgument("name", true));
     }
 
@@ -52,8 +48,12 @@ class CreateSubcommand extends BaseSubCommand
             return;
         }
 
-        $worldOptions = (new WorldCreationOptions())->setGeneratorClass(Island::class);
-        $worldManager->generateWorld("master-skyblock." . $args["name"], $worldOptions);
+        if(count(array_diff(Utils::assumeNotFalse(scandir($plugin->getDataFolder() . 'island/island')), ['..', '.'])) == 0){
+            $sender->sendMessage("no default island");
+            return;
+        }
+
+        WorldHelper::copyWorld("island", "master-skyblock." . $args["name"]);
         $skyblockManager->createSkyblock($args["name"], $sender);
     }
 }

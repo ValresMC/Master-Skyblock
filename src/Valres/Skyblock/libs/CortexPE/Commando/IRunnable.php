@@ -38,7 +38,7 @@ use Valres\Skyblock\libs\CortexPE\Commando\constraint\BaseConstraint;
  * An interface which is declares the minimum required information
  * to get background information for a command and/or a sub-command
  *
- * @package CortexPE\Commando
+ * @package Valres\Skyblock\libs\CortexPE\Commando
  */
 interface IRunnable {
     public function getName(): string;
@@ -48,12 +48,12 @@ interface IRunnable {
      */
     public function getAliases(): array;
 
-    public function getUsageMessage(): string;
+    public function getUsageMessage():string;
 
-    public function getPermissions(): array;
+    public function getPermission(); // f*ck. PM didn't declare a return type... reeee
 
     /**
      * @return BaseConstraint[]
      */
-    public function getConstraints(): array;
+    public function getConstraints():array;
 }

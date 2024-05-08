@@ -112,7 +112,19 @@ abstract class BaseCommand extends Command implements IArgumentable, IRunnable, 
 			if(isset($this->subCommands[($label = $args[0])])){
 				array_shift($args);
 				$cmd = $this->subCommands[$label];
-				if(!$cmd->testPermission($sender)) {
+				$cmd->setCurrentSender($sender);
+				if(!$cmd->testPermissionSilent($sender)) {
+					$msg = $this->getPermissionMessage();
+					if($msg === null) {
+						$sender->sendMessage(
+							$sender->getServer()->getLanguage()->translateString(
+								TextFormat::RED . "%commands.generic.permission"
+							)
+						);
+					} elseif(empty($msg)) {
+						$sender->sendMessage(str_replace("<permission>", $cmd->getPermission(), $msg));
+					}
+
 					return;
 				}
 			}
