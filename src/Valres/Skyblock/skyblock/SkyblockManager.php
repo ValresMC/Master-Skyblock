@@ -46,6 +46,7 @@ class SkyblockManager
             "isLock" => false,
             "creation" => date("d/m/y H:i")
         ], function() use ($name, $player): void {
+            Server::getInstance()->getWorldManager()->loadWorld("master-skyblock." . $name);
             $this->skyblocks[$name] = new SkyblockIsland(
                 $name, $player->getName(),
                 new Position(256, 68, 256, Server::getInstance()->getWorldManager()->getWorldByName("master-skyblock." . $name)),
@@ -54,8 +55,6 @@ class SkyblockManager
                 false,
                 date("M/j/Y H:i:s")
             );
-            Server::getInstance()->getWorldManager()->loadWorld("master-skyblock." . $name);
-
             $skyblockPlayer = Skyblock::getInstance()->getPlayerManager()->getSkyblockPlayer($player);
             if(!$skyblockPlayer instanceof SkyblockPlayer) return;
             $skyblockPlayer->setSkyblock($this->getSkyblock($name));
