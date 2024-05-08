@@ -23,7 +23,7 @@ class PlayerManager
      * @return bool
      */
     public function existSkyblockPlayer(Player $player): bool {
-        return $this->players[$player->getName()] instanceof SkyblockPlayer;
+        return $this->getSkyblockPlayer($player) instanceof SkyblockPlayer;
     }
 
     /**
@@ -33,7 +33,11 @@ class PlayerManager
     public function loadPlayers(): void {
         Skyblock::getInstance()->getDatabase()->executeSelect("players.getAll", [], function(array $rows): void {
             foreach($rows as $row){
-                $this->players[$row["name"]] = new SkyblockPlayer($row["name"], $row["skyblock"], $row["rank"]);
+                $this->players[$row["name"]] = new SkyblockPlayer(
+                    $row["name"],
+                    (($row["skyblock"] === "") ? null : Skyblock::getInstance()->getSkyblockManager()->getSkyblock($row["skyblock"])),
+                    $row["rank"]
+                );
             }
         });
     }
@@ -45,7 +49,7 @@ class PlayerManager
      */
     public function createPlayer(Player $player): void {
         Skyblock::getInstance()->getDatabase()->executeInsert("players.create", ["name" => $player->getName()], function() use ($player): void {
-            $this->players[$player->getName()] = new SkyblockPlayer($player->getName(), null, null);
+            $this->players[$player->getName()] = new SkyblockPlayer($player->getName(), null, "");
         });
     }
 }
