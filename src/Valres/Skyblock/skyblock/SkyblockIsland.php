@@ -3,6 +3,7 @@
 namespace Valres\Skyblock\skyblock;
 
 use pocketmine\world\Position;
+use Valres\Skyblock\Skyblock;
 
 class SkyblockIsland
 {
@@ -13,7 +14,6 @@ class SkyblockIsland
         protected Position $visitSpawn,
         protected array $members,
         protected bool $lock,
-        protected int $points,
         protected string $creation
     ) {}
 
@@ -31,6 +31,7 @@ class SkyblockIsland
      */
     public function setName(string $name): void {
         $this->name = $name;
+        $this->save();
     }
 
     /**
@@ -47,6 +48,7 @@ class SkyblockIsland
      */
     public function setLeaderName(string $leaderName): void {
         $this->leaderName = $leaderName;
+        $this->save();
     }
 
     /**
@@ -63,6 +65,7 @@ class SkyblockIsland
      */
     public function setMemberSpawn(Position $memberSpawn): void {
         $this->memberSpawn = $memberSpawn;
+        $this->save();
     }
 
     /**
@@ -79,6 +82,7 @@ class SkyblockIsland
      */
     public function setVisitSpawn(Position $visitSpawn): void {
         $this->visitSpawn = $visitSpawn;
+        $this->save();
     }
 
     /**
@@ -96,6 +100,7 @@ class SkyblockIsland
      */
     public function addMember(string $name): void {
         $this->members[] = $name;
+        $this->save();
     }
 
     /**
@@ -112,32 +117,7 @@ class SkyblockIsland
      */
     public function setLock(bool $lock): void {
         $this->lock = $lock;
-    }
-
-    /**
-     * Get the points of the skyblock.
-     * @return int
-     */
-    public function getPoints(): int {
-        return $this->points;
-    }
-
-    /**
-     * Add points to the point's skyblock.
-     * @param int $point
-     * @return void
-     */
-    public function addPoint(int $point): void {
-        $this->points += $point;
-    }
-
-    /**
-     * Add points to the point's skyblock.
-     * @param int $point
-     * @return void
-     */
-    public function reducePoint(int $point): void {
-        $this->points -= $point;
+        $this->save();
     }
 
     /**
@@ -146,5 +126,17 @@ class SkyblockIsland
      */
     public function getCreation(): string {
         return $this->creation;
+    }
+
+    public function save(): void {
+        Skyblock::getInstance()->getDatabase()->executeChange("skyblocks.update", [
+            "name" => $this->name,
+            "leader" => $this->leaderName,
+            "memberSpawn" => $this->memberSpawn->x . ":" . $this->memberSpawn->y . ":" . $this->memberSpawn->z,
+            "visitSpawn" => $this->visitSpawn->x . ":" . $this->visitSpawn->y . ":" . $this->visitSpawn->z,
+            "members" => serialize($this->members),
+            "isLock" => $this->lock,
+            "creation" => $this->creation
+        ]);
     }
 }

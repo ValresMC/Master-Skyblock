@@ -12,13 +12,13 @@ CREATE TABLE IF NOT EXISTS players
 SELECT * FROM players;
 -- # }
 -- # { create
--- #    :name     string
-INSERT IGNORE INTO players (name, skyblock, rank) VALUES (:name, NULL, NULL);
+-- #    :name         string
+INSERT INTO players (name, skyblock, rank) VALUES (:name, NULL, NULL);
 -- # }
 -- # { update
--- #    :name     string
--- #    :skyblock string
--- #    :rank     string
+-- #    :name         string
+-- #    :skyblock     string
+-- #    :rank         string
 UPDATE players SET skyblock = :skyblock, rank = :rank WHERE name = :name
 -- # }
 -- #}
@@ -31,9 +31,31 @@ CREATE TABLE IF NOT EXISTS skyblocks
     memberSpawn VARCHAR(255),
     visitSpawn  VARCHAR(255),
     members     VARCHAR(255),
-    isLock      VARCHAR(255),
-    points      INTEGER,
+    isLock      BOOLEAN,
     creation    VARCHAR(255)
 );
+-- # }
+-- # { getAll
+SELECT * FROM skyblocks;
+-- # }
+-- # { create
+-- #    :name         string
+-- #    :leader       string
+-- #    :memberSpawn  string
+-- #    :visitSpawn   string
+-- #    :members      string
+-- #    :isLock       bool
+-- #    :creation     string
+INSERT INTO skyblock (name, leader, memberSpawn, visitSpawn, members, isLock, creation) VALUES (:name, :leader, :memberSpawn, :visitSpawn, :members, :isLock, :creation);
+-- # }
+-- # { update
+-- #    :name         string
+-- #    :leader       string
+-- #    :memberSpawn  string
+-- #    :visitSpawn   string
+-- #    :members      string
+-- #    :isLock       bool
+-- #    :creation     string
+UPDATE skyblocks SET leader = :leader, memberSpawn = :memberSpawn, visitSpawn = :visitSpawn, members = :members, isLock = :isLock, creation = :creation WHERE name = :name
 -- # }
 -- #}

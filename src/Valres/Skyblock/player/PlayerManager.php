@@ -2,7 +2,6 @@
 
 namespace Valres\Skyblock\player;
 
-use Overy\OveryCore\Core;
 use pocketmine\player\Player;
 use Valres\Skyblock\Skyblock;
 
