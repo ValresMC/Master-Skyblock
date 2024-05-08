@@ -1,0 +1,9 @@
+prefix: "§l§9[§r§7Master-Skyblock§l§9]§r"
+
+args-missing: "Some args missing !"
+have-island: "You already have an island."
+no-island: "You don't have an island, do /is create 'name'."
+take-name: "This name is already take."
+no-default-island: "There is no default island."
+create-island: "Your island have been created."
+island-tp: "You have been teleported to your island"

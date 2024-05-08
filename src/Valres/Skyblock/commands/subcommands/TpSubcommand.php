@@ -25,7 +25,7 @@ class TpSubcommand extends BaseSubCommand
 
         $skylock = $skyblockPlayer->getSkyblock();
         if(!$skyblockPlayer->haveSkyblock()){
-            echo "0";
+            $sender->sendMessage($plugin->getMessageManager()->getMessage("no-island"));
             return;
         }
 

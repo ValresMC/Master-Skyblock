@@ -12,6 +12,7 @@ use Valres\Skyblock\libs\CortexPE\Commando\PacketHooker;
 use Valres\Skyblock\libs\poggit\libasynql\DataConnector;
 use Valres\Skyblock\libs\poggit\libasynql\libasynql;
 use Valres\Skyblock\listeners\player\PlayerJoin;
+use Valres\Skyblock\messages\Messages;
 use Valres\Skyblock\player\PlayerManager;
 use Valres\Skyblock\skyblock\SkyblockManager;
 
@@ -21,6 +22,7 @@ class Skyblock extends PluginBase
 
     private PlayerManager $playerManager;
     private SkyblockManager $skyblockManager;
+    private Messages $messages;
 
     private DataConnector $database;
 
@@ -29,6 +31,7 @@ class Skyblock extends PluginBase
      */
     protected function onEnable(): void {
         $this->saveDefaultConfig();
+        $this->saveResource("messages.yml", true);
         @mkdir($this->getDataFolder() . "island/");
 
         $this->database = libasynql::create($this, $this->getConfig()->get("database"), [
@@ -37,6 +40,7 @@ class Skyblock extends PluginBase
         ]);
         $this->playerManager = new PlayerManager();
         $this->skyblockManager = new SkyblockManager();
+        $this->messages = new Messages();
 
         $this->getDatabase()->executeGeneric("players.init");
         $this->getDatabase()->executeGeneric("skyblocks.init");
@@ -44,6 +48,7 @@ class Skyblock extends PluginBase
 
         $this->getSkyblockManager()->loadSkyblocks();
         $this->getPlayerManager()->loadPlayers();
+        $this->getMessageManager()->initMessages();
 
         $this->getServer()->getPluginManager()->registerEvents(new PlayerJoin(), $this);
 
@@ -72,5 +77,9 @@ class Skyblock extends PluginBase
 
     public function getDatabase(): DataConnector {
         return $this->database;
+    }
+
+    public function getMessageManager(): Messages {
+        return $this->messages;
     }
 }

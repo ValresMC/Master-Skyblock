@@ -34,7 +34,7 @@ class CreateSubcommand extends BaseSubCommand
         $skyblockPlayer = $playerManager->getSkyblockPlayer($sender);
         if(!$skyblockPlayer instanceof SkyblockPlayer) return;
         if($skyblockPlayer->haveSkyblock()){
-            echo "0";
+            $sender->sendMessage($plugin->getMessageManager()->getMessage("have-island"));
             return;
         }
 
@@ -44,16 +44,17 @@ class CreateSubcommand extends BaseSubCommand
         }
 
         if($worldManager->getWorldByName("master-skyblock." . $args["name"]) instanceof World){
-            echo "2";
+            $sender->sendMessage($plugin->getMessageManager()->getMessage("take-name"));
             return;
         }
 
         if(count(array_diff(Utils::assumeNotFalse(scandir($plugin->getDataFolder() . 'island/island')), ['..', '.'])) == 0){
-            $sender->sendMessage("no default island");
+            $sender->sendMessage($plugin->getMessageManager()->getMessage("no-default-island"));
             return;
         }
 
         WorldHelper::copyWorld("island", "master-skyblock." . $args["name"]);
         $skyblockManager->createSkyblock($args["name"], $sender);
+        $sender->sendMessage($plugin->getMessageManager()->getMessage("create-island"));
     }
 }
