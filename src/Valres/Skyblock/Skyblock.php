@@ -4,6 +4,9 @@ namespace Valres\Skyblock;
 
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\SingletonTrait;
+use pocketmine\world\generator\GeneratorManager;
+use Valres\Skyblock\commands\IslandCommand;
+use Valres\Skyblock\generator\Island;
 use Valres\Skyblock\libs\poggit\libasynql\DataConnector;
 use Valres\Skyblock\libs\poggit\libasynql\libasynql;
 use Valres\Skyblock\listeners\player\PlayerJoin;
@@ -21,6 +24,7 @@ class Skyblock extends PluginBase
 
     protected function onEnable(): void {
         $this->saveDefaultConfig();
+
         $this->database = libasynql::create($this, $this->getConfig()->get("database"), [
             "sqlite" => "sqlite.sql",
             "mysql" => "mysql.sql"
@@ -32,9 +36,14 @@ class Skyblock extends PluginBase
         $this->getDatabase()->executeGeneric("skyblocks.init");
         $this->getDatabase()->waitAll();
 
+        $this->getSkyblockManager()->loadSkyblocks();
         $this->getPlayerManager()->loadPlayers();
 
         $this->getServer()->getPluginManager()->registerEvents(new PlayerJoin(), $this);
+
+        $this->getServer()->getCommandMap()->registerAll("master-skyblock", [new IslandCommand()]);
+
+        GeneratorManager::getInstance()->addGenerator(Island::class, "island", fn () => null);
     }
 
     protected function onLoad(): void {

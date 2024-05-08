@@ -34,6 +34,14 @@ class SkyblockPlayer
     }
 
     /**
+     * Check if player have skyblock.
+     * @return bool
+     */
+    public function haveSkyblock(): bool {
+        return !is_null($this->skyblock);
+    }
+
+    /**
      * Set the current skyblock of the player.
      * @param SkyblockIsland|null $skyblock
      */
