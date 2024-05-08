@@ -6,6 +6,7 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\utils\SingletonTrait;
 use Valres\Skyblock\libs\poggit\libasynql\DataConnector;
 use Valres\Skyblock\libs\poggit\libasynql\libasynql;
+use Valres\Skyblock\listeners\player\PlayerJoin;
 use Valres\Skyblock\player\PlayerManager;
 use Valres\Skyblock\skyblock\SkyblockManager;
 
@@ -20,15 +21,20 @@ class Skyblock extends PluginBase
 
     protected function onEnable(): void {
         $this->saveDefaultConfig();
-        $this->saveResource("mysql.sql");
         $this->database = libasynql::create($this, $this->getConfig()->get("database"), [
             "sqlite" => "sqlite.sql",
             "mysql" => "mysql.sql"
         ]);
+        $this->playerManager = new PlayerManager();
+        $this->skyblockManager = new SkyblockManager();
 
         $this->getDatabase()->executeGeneric("players.init");
         $this->getDatabase()->executeGeneric("skyblocks.init");
         $this->getDatabase()->waitAll();
+
+        $this->getPlayerManager()->loadPlayers();
+
+        $this->getServer()->getPluginManager()->registerEvents(new PlayerJoin(), $this);
     }
 
     protected function onLoad(): void {
@@ -36,7 +42,8 @@ class Skyblock extends PluginBase
     }
 
     protected function onDisable(): void {
-
+        $this->getDatabase()->waitAll();
+        $this->getDatabase()->close();
     }
 
     public function getPlayerManager(): PlayerManager {
