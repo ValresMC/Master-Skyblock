@@ -4,7 +4,7 @@ namespace Valres\Skyblock\skyblock;
 
 use pocketmine\world\Position;
 
-class Skyblock
+class SkyblockIsland
 {
     public function __construct(
         protected string $name,
