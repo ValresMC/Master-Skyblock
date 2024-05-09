@@ -4,8 +4,8 @@
 CREATE TABLE IF NOT EXISTS players
 (
     name        VARCHAR(255) PRIMARY KEY,
-    skyblock    VARCHAR(255),
-    rank        VARCHAR(255)
+    skyblock    VARCHAR(255) NULL,
+    rank        VARCHAR(255) NULL
 );
 -- # }
 -- # { getAll
@@ -17,9 +17,9 @@ INSERT INTO players (name, skyblock, rank) VALUES (:name, "", "");
 -- # }
 -- # { update
 -- #    :name         string
--- #    :skyblock     string
--- #    :rank         string
-UPDATE players SET skyblock = :skyblock, rank = :rank WHERE name = :name
+-- #    :skyblock     string null
+-- #    :rank         string null
+UPDATE players SET skyblock = :skyblock, rank = :rank WHERE name = :name;
 -- # }
 -- #}
 -- #{ skyblocks
@@ -56,6 +56,10 @@ INSERT INTO skyblocks (name, leader, memberSpawn, visitSpawn, members, isLock, c
 -- #    :members      string
 -- #    :isLock       bool
 -- #    :creation     string
-UPDATE skyblocks SET leader = :leader, memberSpawn = :memberSpawn, visitSpawn = :visitSpawn, members = :members, isLock = :isLock, creation = :creation WHERE name = :name
+UPDATE skyblocks SET leader = :leader, memberSpawn = :memberSpawn, visitSpawn = :visitSpawn, members = :members, isLock = :isLock, creation = :creation WHERE name = :name;
+-- # }
+-- # { delete
+-- #    :name         string
+DELETE FROM skyblocks WHERE name = :name;
 -- # }
 -- #}
