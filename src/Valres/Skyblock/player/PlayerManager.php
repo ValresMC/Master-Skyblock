@@ -11,11 +11,12 @@ class PlayerManager
 
     /**
      * Get a skyblock player.
-     * @param Player $player
+     * @param Player|string $player
      * @return SkyblockPlayer|null
      */
-    public function getSkyblockPlayer(Player $player): ?SkyblockPlayer {
-        return $this->players[$player->getName()] ?? null;
+    public function getSkyblockPlayer(Player|string $player): ?SkyblockPlayer {
+        $name = ($player instanceof Player) ? $player->getName() : $player;
+        return $this->players[$name] ?? null;
     }
 
     /**

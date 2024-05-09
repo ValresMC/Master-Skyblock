@@ -62,4 +62,10 @@ class SkyblockManager
             $skyblockPlayer->getSkyblock()->save();
         });
     }
+
+    public function deleteSkyblock(string $name): void {
+        Skyblock::getInstance()->getDatabase()->executeChange("skyblocks.delete", ["name" => $name], function() use ($name): void {
+            unset($this->skyblocks[$name]);
+        });
+    }
 }
