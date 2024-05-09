@@ -4,10 +4,7 @@ namespace Valres\Skyblock;
 
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\SingletonTrait;
-use pocketmine\world\generator\GeneratorManager;
 use Valres\Skyblock\commands\IslandCommand;
-use Valres\Skyblock\generator\Island;
-use Valres\Skyblock\libs\CortexPE\Commando\exception\HookAlreadyRegistered;
 use Valres\Skyblock\libs\CortexPE\Commando\PacketHooker;
 use Valres\Skyblock\libs\poggit\libasynql\DataConnector;
 use Valres\Skyblock\libs\poggit\libasynql\libasynql;
@@ -26,21 +23,12 @@ class Skyblock extends PluginBase
 
     private DataConnector $database;
 
-    /**
-     * @throws HookAlreadyRegistered
-     */
     protected function onEnable(): void {
         $this->saveDefaultConfig();
         $this->saveResource("messages.yml", true);
         @mkdir($this->getDataFolder() . "island/");
 
-        $this->database = libasynql::create($this, $this->getConfig()->get("database"), [
-            "sqlite" => "sqlite.sql",
-            "mysql" => "mysql.sql"
-        ]);
-        $this->playerManager = new PlayerManager();
-        $this->skyblockManager = new SkyblockManager();
-        $this->messages = new Messages();
+        $this->init();
 
         $this->getDatabase()->executeGeneric("players.init");
         $this->getDatabase()->executeGeneric("skyblocks.init");
@@ -50,12 +38,8 @@ class Skyblock extends PluginBase
         $this->getPlayerManager()->loadPlayers();
         $this->getMessageManager()->initMessages();
 
-        $this->getServer()->getPluginManager()->registerEvents(new PlayerJoin(), $this);
-
-        if(!PacketHooker::isRegistered()) PacketHooker::register($this);
-        $this->getServer()->getCommandMap()->registerAll("master-skyblock", [
-            new IslandCommand($this, "island", "Island base commands", ["is", "skyblock"])
-        ]);
+        $this->loadListeners();
+        $this->loadCommands();
     }
 
     protected function onLoad(): void {
@@ -65,6 +49,33 @@ class Skyblock extends PluginBase
     protected function onDisable(): void {
         $this->getDatabase()->waitAll();
         $this->getDatabase()->close();
+    }
+
+    public function loadCommands(): void {
+        if(!PacketHooker::isRegistered()) PacketHooker::register($this);
+        $this->getServer()->getCommandMap()->registerAll("master-skyblock", [
+            new IslandCommand($this, "island", "Island base commands", ["is", "skyblock"])
+        ]);
+    }
+
+    public function loadListeners(): void {
+        $listeners = [
+            new PlayerJoin()
+        ];
+
+        foreach($listeners as $listener){
+            $this->getServer()->getPluginManager()->registerEvents($listener, $this);
+        }
+    }
+
+    public function init(): void {
+        $this->database = libasynql::create($this, $this->getConfig()->get("database"), [
+            "sqlite" => "sqlite.sql",
+            "mysql" => "mysql.sql"
+        ]);
+        $this->playerManager = new PlayerManager();
+        $this->skyblockManager = new SkyblockManager();
+        $this->messages = new Messages();
     }
 
     public function getPlayerManager(): PlayerManager {
