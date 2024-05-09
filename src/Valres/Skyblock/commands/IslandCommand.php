@@ -5,6 +5,7 @@ namespace Valres\Skyblock\commands;
 use pocketmine\command\CommandSender;
 use pocketmine\permission\DefaultPermissions;
 use Valres\Skyblock\commands\subcommands\CreateSubcommand;
+use Valres\Skyblock\commands\subcommands\DisbandSubcommand;
 use Valres\Skyblock\commands\subcommands\TpSubcommand;
 use Valres\Skyblock\libs\CortexPE\Commando\BaseCommand;
 
@@ -12,8 +13,9 @@ class IslandCommand extends BaseCommand
 {
     protected function prepare(): void {
         $this->setPermission(DefaultPermissions::ROOT_USER);
-        $this->registerSubCommand(new CreateSubcommand("create", "Create your island"));
-        $this->registerSubCommand(new TpSubcommand("tp", "Teleport to your island", ["go"]));
+        $this->registerSubCommand(new CreateSubcommand());
+        $this->registerSubCommand(new DisbandSubcommand());
+        $this->registerSubCommand(new TpSubcommand());
     }
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {

@@ -16,6 +16,10 @@ use Valres\Skyblock\utils\WorldHelper;
 
 class CreateSubcommand extends BaseSubCommand
 {
+    public function __construct() {
+        parent::__construct("create", "Create your island");
+    }
+
     /**
      * @throws ArgumentOrderException
      */
@@ -39,7 +43,7 @@ class CreateSubcommand extends BaseSubCommand
         }
 
         if(empty($args)){
-            echo "1";
+            $sender->sendMessage($plugin->getMessageManager()->getMessage("args-missing"));
             return;
         }
 

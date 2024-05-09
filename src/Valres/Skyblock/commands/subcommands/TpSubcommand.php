@@ -11,6 +11,11 @@ use Valres\Skyblock\Skyblock;
 
 class TpSubcommand extends BaseSubCommand
 {
+
+    public function __construct() {
+        parent::__construct("tp", "Teleport to your island", ["go"]);
+    }
+
     protected function prepare(): void {
         $this->setPermission(DefaultPermissions::ROOT_USER);
     }
